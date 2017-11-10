@@ -8,10 +8,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.adgvcxz.cardlayoutmanager.CardLayoutManager;
 import com.adgvcxz.cardlayoutmanager.CardSnapHelper;
+import com.adgvcxz.cardlayoutmanager.LeftCardSwipeController;
 import com.adgvcxz.cardlayoutmanager.OnCardSwipeListener;
 
 import java.util.ArrayList;
@@ -30,7 +32,10 @@ public class MainActivity extends AppCompatActivity {
         }
         final RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
-        final CardLayoutManager layoutManager = new CardLayoutManager(CardLayoutManager.TransX.RIGHT, CardLayoutManager.TransY.NONE);
+        final CardLayoutManager layoutManager = new CardLayoutManager(
+                LinearLayout.HORIZONTAL,
+                CardLayoutManager.TransX.RIGHT, CardLayoutManager.TransY.NONE,
+                new LeftCardSwipeController(LinearLayout.HORIZONTAL));
         layoutManager.setVerticalSwipe(false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new MainAdapter());
@@ -65,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                         float d = x2 - x1;
                         if (Math.abs(d) > MIN_DISTANCE) {
                             firstMove = true;
-                            if (d < 0) {
+                            if (d > 0) {
                                 recyclerView.smoothScrollToPosition(layoutManager.getTopPosition() - 1);
                             } else {
                                 recyclerView.smoothScrollToPosition(layoutManager.getTopPosition() + 1);
