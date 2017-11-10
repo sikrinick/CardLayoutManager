@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -49,6 +50,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         final TextView textView = findViewById(R.id.ac_main_info);
+        recyclerView.setOnTouchListener(new View.OnTouchListener() {
+            float x1, x2;
+            boolean firstMove;
+            int MIN_DISTANCE = 150;
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    firstMove = false;
+                    x1 = motionEvent.getX();
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                    if (!firstMove) {
+                        x2 = motionEvent.getX();
+                        float d = x2 - x1;
+                        if (Math.abs(d) > MIN_DISTANCE) {
+                            firstMove = true;
+                            if (d < 0) {
+                                recyclerView.smoothScrollToPosition(layoutManager.getTopPosition() - 1);
+                            } else {
+                                recyclerView.smoothScrollToPosition(layoutManager.getTopPosition() + 1);
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+        });
         layoutManager.setOnCardSwipeListener(new OnCardSwipeListener() {
             @Override
             public void onSwipe(View view, int position, int dx, int dy) {
